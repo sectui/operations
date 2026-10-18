@@ -1,5 +1,6 @@
-import { expect, test } from "bun:test";
-import { run, runText } from "../../registry";
+import { test } from "node:test";
+import { expect } from "../../test/expect.ts";
+import { run, runText } from "../../registry.ts";
 
 test("url-encode", () => {
   expect(runText("url-encode", "a b&c=é")).toBe("a%20b&c=%C3%A9");

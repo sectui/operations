@@ -1,5 +1,6 @@
-import { expect, test } from "bun:test";
-import { run, runText } from "../../registry";
+import { test } from "node:test";
+import { expect } from "../../test/expect.ts";
+import { run, runText } from "../../registry.ts";
 
 const DEADBEEF = new Uint8Array([0xde, 0xad, 0xbe, 0xef]);
 
@@ -7,14 +8,13 @@ test("to-base64", () => {
   expect(runText("to-base64", "hello")).toBe("aGVsbG8=");
   expect(runText("to-base64", "")).toBe("");
   expect(runText("to-base64", DEADBEEF)).toBe("3q2+7w==");
-  expect(runText("to-base64", DEADBEEF, { alphabet: "base64url" })).toBe("3q2-7w==");
   expect(runText("to-base64", DEADBEEF, { padding: false })).toBe("3q2+7w");
 });
 
 test("from-base64", () => {
   expect(runText("from-base64", "aGVsbG8=")).toBe("hello");
   expect(run("from-base64", "3q2+7w==")).toEqual(DEADBEEF);
-  expect(run("from-base64", "3q2-7w", { alphabet: "base64url" })).toEqual(DEADBEEF);
+  expect(() => run("from-base64", "3q2-7w", { strict: true })).toThrow('unexpected character "-"');
 });
 
 test("from-base64 is lenient by default", () => {

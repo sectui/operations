@@ -8,9 +8,27 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Oldest supported version (see "engines" in package.json) and latest.
+        node-version: ["26", latest]
     steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
-      - run: bun install --frozen-lockfile
-      - run: bun run typecheck
-      - run: bun test
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run format:check
+      - name: Check generated docs are up to date
+        if: matrix.node-version == 'latest'
+        run: npm run docs && git diff --exit-code docs/
+      - run: npm run build
+      - run: npm run bundle
+      - name: Smoke test the built CLI and the bundle
+        run: |
+          test "$(node dist/cli.js to-base64 hello)" = "aGVsbG8="
+          test "$(node dist/ops.mjs to-base64 hello)" = "aGVsbG8="
+          test "$(node dist/ops.mjs --version)" = "$(jq -r .version package.json)"

@@ -1,4 +1,4 @@
-import { defineOperation } from "../../operation";
+import { defineOperation } from "../../operation.ts";
 
 const PERCENT = 0x25;
 const PLUS = 0x2b;
@@ -15,20 +15,25 @@ function hexValue(byte: number | undefined): number {
 export const urlDecode = defineOperation({
   id: "url-decode",
   name: "URL Decode",
-  description:
-    "Decodes %XX sequences (percent-encoding) into bytes. Invalid sequences are left as is.",
+  description: "Decodes %XX sequences (percent-encoding) into bytes. Invalid sequences are left as is.",
   category: "Encoding",
+  output: "binary",
   aliases: ["percent decode", "urldecode"],
   inverse: "url-encode",
   infoUrl: "https://wikipedia.org/wiki/Percent-encoding",
   args: {
     plusAsSpace: {
       type: "boolean",
-      name: "Treat \"+\" as space",
+      name: 'Treat "+" as space',
       description: "HTML form behavior (application/x-www-form-urlencoded).",
       default: true,
     },
   },
+  examples: [
+    { input: "a%20b%26c%3D%C3%A9", output: "a b&c=é" },
+    { input: "a+b", output: "a b" },
+    { input: "a+b", args: { plusAsSpace: false }, output: "a+b" },
+  ],
   run(input, { plusAsSpace }) {
     const out = new Uint8Array(input.length);
     let n = 0;
