@@ -1,6 +1,6 @@
 {
   "name": "@sectui/operations",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "CyberChef-like data transformation operations: a TypeScript library and the ops CLI",
   "license": "MIT",
   "author": "Hadi",
