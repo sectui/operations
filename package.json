@@ -33,7 +33,7 @@
     }
   },
   "bin": {
-    "ops": "./dist/cli.js"
+    "ops": "dist/cli.js"
   },
   "engines": {
     "node": ">=26"
